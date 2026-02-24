@@ -66,8 +66,9 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "Aquí está nuestra carta 📄\nhttps://linktr.ee/lacurvadelgordo" }
+                text: { body: "Aquí está nuestra carta 📄\nhttps://drive.google.com/file/d/1JrnFjl9W5yyd6Dyfo5gW5oAzfLab1SVt/view" }
             };
+            // https://linktr.ee/lacurvadelgordo
         } else if (texto === "btn_horarios") {
             data = {
                 messaging_product: "whatsapp",
@@ -82,6 +83,14 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 type: "text",
                 text: { body: "🛵 Para domicilio envíanos:\n\nNombre\nTeléfono\nDirección\nPedido" }
             };
+        } else if (texto === "btn_menu") {
+            data = {
+                messaging_product: "whatsapp",
+                to: number,
+                type: "text",
+                text: { body: "Aquí nuestro menu del dia 📄\nPor definir" }
+            };
+            // https://linktr.ee/lacurvadelgordo
         } else if (texto === "btn_ubicacion") {
             data = {
                 messaging_product: "whatsapp",
@@ -93,6 +102,13 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                     name: "La Curva Del Gordo - Guarne",
                     address: "Guarne, Antioquia"
                 }
+            };
+        }else if (texto === "btn_redes") {
+            data = {
+                messaging_product: "whatsapp",
+                to: number,
+                type: "text",
+                text: { body: "📋 Nuestras Redes:\n\n🍽️ https://linktr.ee/lacurvadelgordo\n💯 https://www.instagram.com/lacurvadelgordo/?hl=es" }
             };
         } else {
             // Respuesta por defecto si no entiende el mensaje
