@@ -22,7 +22,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
     let data;
 
     // =============================
-    // SALUDO / MENU PRINCIPAL
+    // MENU PRINCIPAL
     // =============================
     if (!texto || texto.includes("hola")) {
 
@@ -33,7 +33,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             interactive: {
                 type: "list",
                 body: {
-                    text: "🚀 Hola! Bienvenido a La Curva Del Gordo - Sede GUARNE.\n\nSelecciona una opción:"
+                    text: "🚀 Bienvenido a La Curva Del Gordo - Guarne.\nSelecciona una opción:"
                 },
                 footer: {
                     text: "Estamos atentos a tu solicitud 🙌"
@@ -42,20 +42,48 @@ async function EnviarMensajeWhastpapp(messageData, number) {
                     button: "Ver opciones",
                     sections: [
                         {
-                            title: "Soy cliente",
+                            title: "Cliente",
                             rows: [
-                                { id: "btn_comprar", title: "Comprar desde la carta" },
-                                { id: "btn_horarios", title: "Horarios de Atención" },
-                                { id: "btn_domicilio", title: "Pedir un Domicilio" },
-                                { id: "btn_menu", title: "Menú del día" },
-                                { id: "btn_ubicacion", title: "Ubicación sede Guarne" },
-                                { id: "btn_redes", title: "Redes Sociales" }
+                                {
+                                    id: "btn_comprar",
+                                    title: "Comprar carta",
+                                    description: "Ver nuestra carta completa"
+                                },
+                                {
+                                    id: "btn_horarios",
+                                    title: "Horarios",
+                                    description: "Ver horario de atención"
+                                },
+                                {
+                                    id: "btn_domicilio",
+                                    title: "Domicilio",
+                                    description: "Solicitar pedido a domicilio"
+                                },
+                                {
+                                    id: "btn_menu",
+                                    title: "Menu del dia",
+                                    description: "Consultar menú actual"
+                                },
+                                {
+                                    id: "btn_ubicacion",
+                                    title: "Ubicacion",
+                                    description: "Ver ubicación en mapa"
+                                },
+                                {
+                                    id: "btn_redes",
+                                    title: "Redes Sociales",
+                                    description: "Instagram y más información"
+                                }
                             ]
                         },
                         {
-                            title: "Soy proveedor",
+                            title: "Proveedor",
                             rows: [
-                                { id: "btn_proveedor", title: "Ofrecer productos / Solicitar pedido" }
+                                {
+                                    id: "btn_proveedor",
+                                    title: "Soy proveedor",
+                                    description: "Ofrecer productos o pedidos"
+                                }
                             ]
                         }
                     ]
@@ -73,7 +101,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             to: number,
             type: "text",
             text: {
-                body: "Perfecto proveedor 🙌\n\nEnvíanos tu catálogo y disponibilidad para esta semana y te contactaremos."
+                body: "Perfecto proveedor 🙌\n\nEnvíanos tu catálogo y disponibilidad para esta semana."
             }
         });
 
@@ -134,7 +162,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             to: number,
             type: "text",
             text: {
-                body: "😋 El menú del día está por definirse.\n\nPronto publicaremos las delicias disponibles. ¡Atento!"
+                body: "😋 El menú del día está por definirse.\nPronto publicaremos nuestras delicias."
             }
         });
 
@@ -200,7 +228,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             to: number,
             type: "text",
             text: {
-                body: "No entendí tu mensaje 🤔\n\nEscribe *hola* para ver el menú principal."
+                body: "No entendí tu mensaje 🤔\nEscribe *hola* para ver el menú."
             }
         });
     }
