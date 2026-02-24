@@ -5,6 +5,7 @@ const {
     WHATSAPP_PHONE_NUMBER_ID,
     WHATSAPP_API_VERSION
 } = require("../config");
+const { text } = require("express");
 
 /**
  * Función para enviar mensajes a WhatsApp
@@ -120,36 +121,43 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 type: "text",
                 text: { body: "Gracias a ti por contactarnos. 🤩" }
             };
-        } else if (texto.startsWith("gchatgpt:")) {
+        } else if (texto === "btn_usar_ia") {
 
-            const pregunta = texto.split("gchatgpt:")[1]?.trim();
+            data = {
+                messaging_product: "whatsapp",
+                to: number,
+                type: "text",
+                text: { body: "🤖 Perfecto. Escríbeme tu pregunta y te responderé enseguida 😊" }
+            };
 
-            if (!pregunta) {
-                data = {
-                    messaging_product: "whatsapp",
-                    to: number,
-                    type: "text",
-                    text: { body: "Escribe tu pregunta después de gchatgpt:" }
-                };
-            } else {
+        } else if (texto === "btn_no_ia") {
 
-                const respuestaIA = await responderConIA(pregunta);
+            data = {
+                messaging_product: "whatsapp",
+                to: number,
+                type: "text",
+                text: { body: "👌 Está bien. Si necesitas algo más escribe *hola* para volver al menú principal." }
+            };
 
+        } else {
+            if (texto.length > 4){
+                const respuestaIA = await responderConIA(texto);
+    
                 data = {
                     messaging_product: "whatsapp",
                     to: number,
                     type: "text",
                     text: { body: respuestaIA }
                 };
+            } else {
+                data = {
+                    messaging_product: "whatsapp",
+                    to: number,
+                    type: "text",
+                    text: { body: "⚠️ Por favor, escribe algo más claro." }
+                };
             }
-        } else {
-            // Respuesta por defecto si no entiende el mensaje
-            data = {
-                messaging_product: "whatsapp",
-                to: number,
-                type: "text",
-                text: { body: "Perfecto quedamos atentos a la respuesta que nos brindo, si quieres saber mas Escribe *hola* para ver el menú principal." }
-            };
+
         }
         console.log("OpenAI:", process.env.OPENAI_API_KEY ? "OK" : "NO");
         // --- ENVÍO DE LA PETICIÓN ---
