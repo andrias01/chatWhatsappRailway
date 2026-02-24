@@ -1,14 +1,16 @@
 const enviarmensaje = require("../service/apiservice");
 const verificar = (req, res) => {
     try{
-        var tokenAndres = "ANDRESNODEJSAPIMETA";
-        var token = req.query["hub.verify_token"];
-        var challenge = req.query["hub.challenge"];
-        if (challenge != null && token != null && token == tokenAndres){
-            res.send(challenge);
-        }else{
-            res.status(400).send();
-        }
+        // var tokenAndres = "ANDRESNODEJSAPIMETA";
+        // var token = req.query["hub.verify_token"];
+        // var challenge = req.query["hub.challenge"];
+        // if (challenge != null && token != null && token == tokenAndres){
+        //     res.send(challenge);
+        // }else{
+        //     res.status(400).send();
+        // }
+        res.send("EVENT_RECEIVED");
+        console.log("EVENT_RECEIVED");
     }catch(e){
         res.status(400).send();
     }
