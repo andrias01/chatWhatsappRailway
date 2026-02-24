@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { responderConIA } = require("../service/chatService"); // o la ruta donde lo guardes
+const { responderConIA } = require("./chatgpt");
 const {
     WHATSAPP_TOKEN,
     WHATSAPP_PHONE_NUMBER_ID,
