@@ -5,12 +5,8 @@ const {
     WHATSAPP_TOKEN
 } = require("../config");
 
-// =============================
-// FUNCION PRINCIPAL
-// =============================
 async function EnviarMensajeWhastpapp(messageData, number) {
 
-    // Detectar texto o ID de botón/lista
     let texto =
         messageData?.interactive?.button_reply?.id ||
         messageData?.interactive?.list_reply?.id ||
@@ -19,12 +15,14 @@ async function EnviarMensajeWhastpapp(messageData, number) {
 
     texto = texto.toLowerCase().trim();
 
+    console.log("TEXTO PROCESADO:", texto);
+
     let data;
 
     // =============================
     // MENU PRINCIPAL
     // =============================
-    if (!texto || texto.includes("hola")) {
+    if (!texto || texto === "hola") {
 
         data = JSON.stringify({
             messaging_product: "whatsapp",
@@ -36,7 +34,7 @@ async function EnviarMensajeWhastpapp(messageData, number) {
                     text: "🚀 Bienvenido a La Curva Del Gordo - Guarne.\nSelecciona una opción:"
                 },
                 footer: {
-                    text: "Estamos atentos a tu solicitud 🙌"
+                    text: "Estamos atentos 🙌"
                 },
                 action: {
                     button: "Ver opciones",
@@ -44,46 +42,18 @@ async function EnviarMensajeWhastpapp(messageData, number) {
                         {
                             title: "Cliente",
                             rows: [
-                                {
-                                    id: "btn_comprar",
-                                    title: "Comprar carta",
-                                    description: "Ver nuestra carta completa"
-                                },
-                                {
-                                    id: "btn_horarios",
-                                    title: "Horarios",
-                                    description: "Ver horario de atención"
-                                },
-                                {
-                                    id: "btn_domicilio",
-                                    title: "Domicilio",
-                                    description: "Solicitar pedido a domicilio"
-                                },
-                                {
-                                    id: "btn_menu",
-                                    title: "Menu del dia",
-                                    description: "Consultar menú actual"
-                                },
-                                {
-                                    id: "btn_ubicacion",
-                                    title: "Ubicacion",
-                                    description: "Ver ubicación en mapa"
-                                },
-                                {
-                                    id: "btn_redes",
-                                    title: "Redes Sociales",
-                                    description: "Instagram y más información"
-                                }
+                                { id: "btn_comprar", title: "Comprar carta" },
+                                { id: "btn_horarios", title: "Horarios" },
+                                { id: "btn_domicilio", title: "Domicilio" },
+                                { id: "btn_menu", title: "Menu del dia" },
+                                { id: "btn_ubicacion", title: "Ubicacion" },
+                                { id: "btn_redes", title: "Redes Sociales" }
                             ]
                         },
                         {
                             title: "Proveedor",
                             rows: [
-                                {
-                                    id: "btn_proveedor",
-                                    title: "Soy proveedor",
-                                    description: "Ofrecer productos o pedidos"
-                                }
+                                { id: "btn_proveedor", title: "Soy proveedor" }
                             ]
                         }
                     ]
@@ -91,53 +61,55 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             }
         });
 
-    // =============================
-    // PROVEEDOR
-    // =============================
-    } else if (texto === "btn_proveedor") {
-
-        data = JSON.stringify({
-            messaging_product: "whatsapp",
-            to: number,
-            type: "text",
-            text: {
-                body: "Perfecto proveedor 🙌\n\nEnvíanos tu catálogo y disponibilidad para esta semana."
-            }
-        });
-
-    // =============================
-    // COMPRAR CARTA
-    // =============================
     } else if (texto === "btn_comprar") {
 
         data = JSON.stringify({
             messaging_product: "whatsapp",
             to: number,
-            type: "document",
-            document: {
-                link: "https://drive.google.com/uc?export=download&id=1JrnFjl9W5yyd6Dyfo5gW5oAzfLab1SVt",
-                caption: "Carta La Curva Del Gordo 📄"
+            type: "text",
+            text: {
+                body: "Aquí está nuestra carta 📄\nhttps://linktr.ee/lacurvadelgordo"
             }
         });
 
-    // =============================
-    // REDES SOCIALES
-    // =============================
-    } else if (texto === "btn_redes") {
+    } else if (texto === "btn_horarios") {
 
         data = JSON.stringify({
             messaging_product: "whatsapp",
             to: number,
             type: "text",
             text: {
-                preview_url: true,
-                body: "📲 Nuestras redes:\n\n🔗 https://linktr.ee/lacurvadelgordo\n📸 https://www.instagram.com/lacurvadelgordo/\n\n¡Síguenos! ✨"
+                body:
+                    "📅 Horarios:\n\n" +
+                    "Lunes: 12pm - 8pm\n" +
+                    "Martes a Domingo: 8am - 8pm"
             }
         });
 
-    // =============================
-    // UBICACION
-    // =============================
+    } else if (texto === "btn_domicilio") {
+
+        data = JSON.stringify({
+            messaging_product: "whatsapp",
+            to: number,
+            type: "text",
+            text: {
+                body:
+                    "🛵 Para domicilio envíanos:\n\n" +
+                    "Nombre\nTeléfono\nDirección\nPedido"
+            }
+        });
+
+    } else if (texto === "btn_menu") {
+
+        data = JSON.stringify({
+            messaging_product: "whatsapp",
+            to: number,
+            type: "text",
+            text: {
+                body: "😋 El menú del día está por definirse."
+            }
+        });
+
     } else if (texto === "btn_ubicacion") {
 
         data = JSON.stringify({
@@ -147,80 +119,37 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             location: {
                 latitude: "6.216140699502393",
                 longitude: "-75.4402760970243",
-                name: "La Curva Del Gordo - Sede Guarne",
+                name: "La Curva Del Gordo - Guarne",
                 address: "Guarne, Antioquia"
             }
         });
 
-    // =============================
-    // MENU DEL DIA
-    // =============================
-    } else if (texto === "btn_menu") {
+    } else if (texto === "btn_redes") {
 
         data = JSON.stringify({
             messaging_product: "whatsapp",
             to: number,
             type: "text",
             text: {
-                body: "😋 El menú del día está por definirse.\nPronto publicaremos nuestras delicias."
-            }
-        });
-
-    // =============================
-    // DOMICILIO
-    // =============================
-    } else if (texto === "btn_domicilio") {
-
-        data = JSON.stringify({
-            messaging_product: "whatsapp",
-            to: number,
-            type: "text",
-            text: {
+                preview_url: true,
                 body:
-                    "🛵 Para tu domicilio envíanos:\n\n" +
-                    "📝 Nombre completo\n" +
-                    "📞 Teléfono\n" +
-                    "📍 Dirección\n" +
-                    "⏰ Hora deseada\n" +
-                    "📦 Pedido\n\n" +
-                    "Te confirmaremos pronto 🙌"
+                    "📲 Redes Sociales:\n\n" +
+                    "https://linktr.ee/lacurvadelgordo\n" +
+                    "https://www.instagram.com/lacurvadelgordo/"
             }
         });
 
-    // =============================
-    // HORARIOS
-    // =============================
-    } else if (texto === "btn_horarios") {
+    } else if (texto === "btn_proveedor") {
 
         data = JSON.stringify({
             messaging_product: "whatsapp",
             to: number,
             type: "text",
             text: {
-                body:
-                    "📅 Horario de Atención:\n\n" +
-                    "🕛 Lunes: 12pm - 8pm\n" +
-                    "🕗 Martes a Domingo: 8am - 8pm"
+                body: "Envíanos tu catálogo y disponibilidad."
             }
         });
 
-    // =============================
-    // DESPEDIDA
-    // =============================
-    } else if (texto.includes("adios") || texto.includes("bye")) {
-
-        data = JSON.stringify({
-            messaging_product: "whatsapp",
-            to: number,
-            type: "text",
-            text: {
-                body: "👋 ¡Hasta luego! Te esperamos pronto."
-            }
-        });
-
-    // =============================
-    // DEFAULT
-    // =============================
     } else {
 
         data = JSON.stringify({
@@ -228,14 +157,11 @@ async function EnviarMensajeWhastpapp(messageData, number) {
             to: number,
             type: "text",
             text: {
-                body: "No entendí tu mensaje 🤔\nEscribe *hola* para ver el menú."
+                body: "Escribe *hola* para ver el menú principal."
             }
         });
     }
 
-    // =============================
-    // ENVIO A META API
-    // =============================
     const options = {
         host: "graph.facebook.com",
         path: `/${WHATSAPP_API_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}/messages`,

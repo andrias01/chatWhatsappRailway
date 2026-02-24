@@ -1,65 +1,72 @@
 const enviarmensaje = require("../service/apiservice");
+
 const verificar = (req, res) => {
-    try{
-        var tokenAndres = "ANDRESNODEJSAPIMETA";
-        var token = req.query["hub.verify_token"];
-        var challenge = req.query["hub.challenge"];
-        if (challenge != null && token != null && token == tokenAndres){
-            res.send(challenge);
-        }else{
-            res.status(400).send();
+    try {
+        const tokenAndres = "ANDRESNODEJSAPIMETA";
+        const token = req.query["hub.verify_token"];
+        const challenge = req.query["hub.challenge"];
+
+        if (challenge && token && token === tokenAndres) {
+            res.status(200).send(challenge);
+        } else {
+            res.status(400).send("Error de verificación");
         }
-        
-    }catch(e){
-        res.status(400).send();
+
+    } catch (e) {
+        res.status(400).send("Error");
     }
-}
-const recibir = (req, res) => {
-    try{
-        var entry = (req.body["entry"])[0];
-        var changes = (entry["changes"])[0];
-        var value = changes["value"];
-        var objetoMensaje = value["messages"];
+};
 
-        var tipo = objetoMensaje[0]["type"];
+const recibir = async (req, res) => {
+    try {
 
-        if(tipo=="interactive"){
-            var tipointeractivo= objetoMensaje[0]["interactive"]["type"];
+        const entry = req.body.entry?.[0];
+        const changes = entry?.changes?.[0];
+        const value = changes?.value;
+        const messages = value?.messages?.[0];
 
-            if(tipointeractivo=="button_reply"){
-                var texto = objetoMensaje[0]["interactive"]["button_reply"]["id"];
-                var numero = objetoMensaje[0]["from"];
+        if (!messages) {
+            return res.send("EVENT_RECEIVED");
+        }
 
-                enviarmensaje.EnviarMensajeWhastpapp(texto, numero);
-            }else if(tipointeractivo=="list_reply"){
-                var texto = objetoMensaje[0]["interactive"]["list_reply"]["id"];
-                var numero = objetoMensaje[0]["from"];
-                
-                console.log(texto);
+        const numero = messages.from;
+        const tipo = messages.type;
+
+        let texto = "";
+
+        // ✅ SI ES MENSAJE INTERACTIVO (BOTONES O LISTA)
+        if (tipo === "interactive") {
+
+            const tipoInteractivo = messages.interactive.type;
+
+            if (tipoInteractivo === "button_reply") {
+                texto = messages.interactive.button_reply.id;
             }
 
+            if (tipoInteractivo === "list_reply") {
+                texto = messages.interactive.list_reply.id;
+            }
+
+            await enviarmensaje.EnviarMensajeWhastpapp(texto, numero);
         }
 
-        if (typeof objetoMensaje != "undefined"){
-            var messages = objetoMensaje[0];
-            var texto = messages["text"]["body"];
-            var numero = messages["from"];
+        // ✅ SI ES MENSAJE DE TEXTO NORMAL
+        else if (tipo === "text") {
 
-            enviarmensaje.EnviarMensajeWhastpapp(texto, numero);
+            texto = messages.text.body;
 
+            await enviarmensaje.EnviarMensajeWhastpapp(texto, numero);
         }
 
         res.send("EVENT_RECEIVED");
 
-    }catch(e){
-
-        /* console.log(e); */
-        res.send("EVENT_RECEIVEDs");
-
+    } catch (e) {
+        console.log("Error:", e);
+        res.send("EVENT_RECEIVED");
     }
-}
+};
 
 module.exports = {
     verificar,
     recibir
-}
+};
