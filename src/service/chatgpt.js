@@ -1,8 +1,8 @@
-const OpenAI = require("openai");
+const OpenAI = require("openai").default;
 const { OPENAI_API_KEY } = require("../config");
 
 const openai = new OpenAI({
-    apiKey: OPENAI_API_KEY
+  apiKey: OPENAI_API_KEY,
 });
 
 async function responderConIA(preguntaUsuario) {
