@@ -14,17 +14,46 @@ const openai = new OpenAIApi(configuration);
 
 async function EnviarMensajeWhastpapp(texto,number){
 
-    texto = texto.toLowerCase();
+    texto = (texto || "").toLowerCase().trim();
 
-    if (texto.includes("hola")){
+    if (!texto || texto.includes("hola")){
         var data = JSON.stringify({
             "messaging_product": "whatsapp",
-            "recipient_type": "individual",
             "to": number,
-            "type": "text",
-            "text": {
-                "preview_url": false,
-                "body": "🚀 Hola!, Como estás?, Bienvenido."
+            "type": "interactive",
+            "interactive": {
+                "type":"list",
+                "body":{
+                    "text":"🚀 Hola!, Como estás?, Bienvenido.\nEsta es la Curva Del Gordo Sede de GUARNE escoje una de las siguientes opciones.\n\nSelecciona la opción segun tu solicitud"
+                },
+                "footer":{
+                    "text":"Quedo atento a tu opción"
+                },
+                "action":{
+                    "button":"Ver opciones",
+                    "sections":[
+                        {
+                            "title":"Soy cliente",
+                            "rows":[
+                                {
+                                    "id":"btncompar",
+                                    "title":"Comprar",
+                                    "description":"Comprar desde la carta"
+                                }
+                            ]
+                        },
+                        {
+                            "title":"Soy proveedor",
+                            "rows":[
+                                {
+                                    "id":"btnproveedor",
+                                    "title":"Proveedor",
+                                    "description":"Quiero ofrecer mis productos"
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         });
     }else if (texto=="1"){
