@@ -1,5 +1,6 @@
 const express = require("express");
 const apiruta = require("./routers/ruta");
+require("dotenv").config();
 
 const app = express();
 

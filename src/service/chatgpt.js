@@ -1,23 +1,38 @@
-
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 const { OPENAI_API_KEY } = require("../config");
 
-const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY,
+const openai = new OpenAI({
+    apiKey: OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
-async function getCompletion() {
-    const response = await openai.createCompletion({
-      model: "text-davinci-002",
-      prompt: "que es lima?",
-      temperature: 0.5,
-      max_tokens: 100,
-      top_p: 1,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
+async function responderConIA(preguntaUsuario) {
+
+    const contexto = `
+Eres el asistente virtual del restaurante "La Curva Del Gordo - Guarne".
+
+Información:
+- Restaurante ubicado en Guarne, Antioquia.
+- Horarios:
+  Lunes: 12pm - 8pm
+  Martes a Domingo: 8am - 8pm
+- Instagram: https://www.instagram.com/lacurvadelgordo
+- Linktree: https://linktr.ee/lacurvadelgordo
+- Solo debes responder preguntas relacionadas con el restaurante.
+- Si la pregunta no está relacionada responde:
+  "Solo puedo responder preguntas relacionadas con La Curva Del Gordo 😊"
+`;
+
+    const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+            { role: "system", content: contexto },
+            { role: "user", content: preguntaUsuario }
+        ],
+        temperature: 0.3,
+        max_tokens: 200
     });
-    console.log(response.data.choices[0].text);
+
+    return completion.choices[0].message.content.trim();
 }
 
-getCompletion();
+module.exports = { responderConIA };

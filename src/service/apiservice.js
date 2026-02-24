@@ -1,8 +1,9 @@
 const axios = require("axios");
-const { 
-    WHATSAPP_TOKEN, 
-    WHATSAPP_PHONE_NUMBER_ID, 
-    WHATSAPP_API_VERSION 
+const { responderConIA } = require("../service/chatService"); // o la ruta donde lo guardes
+const {
+    WHATSAPP_TOKEN,
+    WHATSAPP_PHONE_NUMBER_ID,
+    WHATSAPP_API_VERSION
 } = require("../config");
 
 /**
@@ -18,10 +19,10 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
         if (typeof messageData === "string") {
             texto = messageData;
         } else {
-            texto = messageData?.interactive?.button_reply?.id || 
-                    messageData?.interactive?.list_reply?.id || 
-                    messageData?.text?.body || 
-                    "";
+            texto = messageData?.interactive?.button_reply?.id ||
+                messageData?.interactive?.list_reply?.id ||
+                messageData?.text?.body ||
+                "";
         }
 
         texto = texto.toLowerCase().trim();
@@ -43,19 +44,21 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                         button: "Ver opciones",
                         sections: [
                             {
-                                title: "Cliente",
+                                title: "👤 Cliente",
                                 rows: [
-                                    { id: "btn_comprar", title: "Comprar carta" },
-                                    { id: "btn_horarios", title: "Horarios" },
-                                    { id: "btn_domicilio", title: "Domicilio" },
-                                    { id: "btn_menu", title: "Menu del dia" },
-                                    { id: "btn_ubicacion", title: "Ubicación" },
-                                    { id: "btn_redes", title: "Redes Sociales" }
+                                    { id: "btn_comprar", title: "📋 Ver el Menú (Carta)" },
+                                    { id: "btn_horarios", title: "🕒 Horarios" },
+                                    { id: "btn_domicilio", title: "🛵 Domicilio" },
+                                    { id: "btn_menu", title: "🍽️ Menú del día" },
+                                    { id: "btn_ubicacion", title: "📍 Ubicación" },
+                                    { id: "btn_redes", title: "📱 Redes Sociales" }
                                 ]
                             },
                             {
-                                title: "Proveedor",
-                                rows: [{ id: "btn_proveedor", title: "Soy proveedor" }]
+                                title: "🏢 Proveedor",
+                                rows: [
+                                    { id: "btn_proveedor", title: "📦 Soy proveedor" }
+                                ]
                             }
                         ]
                     }
@@ -103,23 +106,52 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                     address: "Guarne, Antioquia"
                 }
             };
-        }else if (texto === "btn_redes") {
+        } else if (texto === "btn_redes") {
             data = {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
                 text: { body: "📋 Nuestras Redes:\n\n🍽️ https://linktr.ee/lacurvadelgordo\n💯 https://www.instagram.com/lacurvadelgordo/?hl=es" }
             };
+        } else if (texto.toLowerCase().includes("gracias")) {
+            data = {
+                messaging_product: "whatsapp",
+                to: number,
+                type: "text",
+                text: { body: "Gracias a ti por contactarnos. 🤩" }
+            };
+        } else if (texto.startsWith("gchatgpt:")) {
+
+            const pregunta = texto.split("gchatgpt:")[1]?.trim();
+
+            if (!pregunta) {
+                data = {
+                    messaging_product: "whatsapp",
+                    to: number,
+                    type: "text",
+                    text: { body: "Escribe tu pregunta después de gchatgpt:" }
+                };
+            } else {
+
+                const respuestaIA = await responderConIA(pregunta);
+
+                data = {
+                    messaging_product: "whatsapp",
+                    to: number,
+                    type: "text",
+                    text: { body: respuestaIA }
+                };
+            }
         } else {
             // Respuesta por defecto si no entiende el mensaje
             data = {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "Escribe *hola* para ver el menú principal." }
+                text: { body: "Perfecto quedamos atentos a la respuesta que nos brindo, si quieres saber mas Escribe *hola* para ver el menú principal." }
             };
         }
-
+        console.log("OpenAI:", process.env.OPENAI_API_KEY ? "OK" : "NO");
         // --- ENVÍO DE LA PETICIÓN ---
         const response = await axios({
             method: "POST",
