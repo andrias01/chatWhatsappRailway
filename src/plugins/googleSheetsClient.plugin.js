@@ -1,8 +1,12 @@
 const { google } = require("googleapis");
-const path = require("path");
+
+const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+
+// 🔥 Importante: arreglar saltos de línea del private_key
+credentials.private_key = credentials.private_key.replace(/\\n/g, "\n");
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, "..", "..", process.env.GOOGLE_KEY_JSON_PATH),
+  credentials,
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
