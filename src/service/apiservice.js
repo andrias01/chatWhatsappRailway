@@ -5,7 +5,11 @@ const {
     WHATSAPP_PHONE_NUMBER_ID,
     WHATSAPP_API_VERSION
 } = require("../config");
-const { text } = require("express");
+
+const { getMensaje, testGoogleSheets, getContexto } = require("../service/messages");
+
+// const textoRespuesta = getMensaje("btn_redes");
+// console.log(textoRespuesta);
 
 /**
  * Función para enviar mensajes a WhatsApp
@@ -14,6 +18,7 @@ const { text } = require("express");
  */
 const EnviarMensajeWhastpapp = async (messageData, number) => {
     try {
+        await testGoogleSheets();
         let texto = "";
 
         // Extraemos el texto dependiendo de si viene de un botón, lista o texto plano
@@ -70,7 +75,7 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "Aquí está nuestra carta 📄\nhttps://drive.google.com/file/d/1JrnFjl9W5yyd6Dyfo5gW5oAzfLab1SVt/view" }
+                text: { body: getMensaje(texto) }
             };
             // https://linktr.ee/lacurvadelgordo
         } else if (texto === "btn_horarios") {
@@ -78,21 +83,21 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "📅 Horarios:\n\nLunes: 12pm - 8pm\nMartes a Domingo: 8am - 8pm" }
+                text: { body: getMensaje(texto) }
             };
         } else if (texto === "btn_domicilio") {
             data = {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "🛵 Para domicilio envíanos:\n\nNombre\nTeléfono\nDirección\nPedido" }
+                text: { body: getMensaje(texto) }
             };
         } else if (texto === "btn_menu") {
             data = {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "Aquí nuestro menu del dia 📄\nPor definir" }
+                text: { body: getMensaje(texto) }
             };
             // https://linktr.ee/lacurvadelgordo
         } else if (texto === "btn_ubicacion") {
@@ -112,43 +117,34 @@ const EnviarMensajeWhastpapp = async (messageData, number) => {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "📋 Nuestras Redes:\n\n🍽️ https://linktr.ee/lacurvadelgordo\n💯 https://www.instagram.com/lacurvadelgordo/?hl=es" }
+                text: { body: getMensaje(texto) }
             };
         } else if (texto.toLowerCase().includes("gracias")) {
             data = {
                 messaging_product: "whatsapp",
                 to: number,
                 type: "text",
-                text: { body: "Gracias a ti por contactarnos. 🤩" }
+                text: { body: getMensaje(texto) }
             };
-        } else if (texto === "btn_usar_ia") {
-
-            data = {
-                messaging_product: "whatsapp",
-                to: number,
-                type: "text",
-                text: { body: "🤖 Perfecto. Escríbeme tu pregunta y te responderé enseguida 😊" }
-            };
-
-        } else if (texto === "btn_no_ia") {
-
-            data = {
-                messaging_product: "whatsapp",
-                to: number,
-                type: "text",
-                text: { body: "👌 Está bien. Si necesitas algo más escribe *hola* para volver al menú principal." }
-            };
-
         } else {
-            if (texto.length > 4){
-                const respuestaIA = await responderConIA(texto);
-    
-                data = {
-                    messaging_product: "whatsapp",
-                    to: number,
-                    type: "text",
-                    text: { body: respuestaIA }
-                };
+            if (texto.length > 4 || texto.toLowerCase().includes("ok") || texto.toLowerCase().includes("si") || texto.toLowerCase().includes("no")) {
+                if (["ok", "si", "no"].includes(texto)) {
+                    data = {
+                        messaging_product: "whatsapp",
+                        to: number,
+                        type: "text",
+                        text: { body: "👌 Está bien. Si necesitas algo más escribe *hola* para volver al menú principal." }
+                    };
+                } else {
+                    const respuestaIA = await responderConIA(texto);
+
+                    data = {
+                        messaging_product: "whatsapp",
+                        to: number,
+                        type: "text",
+                        text: { body: respuestaIA }
+                    };
+                }
             } else {
                 data = {
                     messaging_product: "whatsapp",
